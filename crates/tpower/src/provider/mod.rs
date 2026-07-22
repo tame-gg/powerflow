@@ -259,6 +259,63 @@ pub fn get_mac_ioreg_dict() -> anyhow::Result<CFDictionary> {
     unsafe { Ok(CFDictionary::wrap_under_create_rule(properties)) }
 }
 
+/// Nested `BatteryData` dictionary present on newer macOS (incl. 27) where some
+/// top-level AppleSmartBattery keys were moved/removed.
+#[derive(Debug, Clone, Default, Deserialize)]
+#[serde(default, rename_all = "PascalCase")]
+struct BatteryDataNested {
+    absolute_capacity: Option<i32>,
+    design_capacity: Option<i32>,
+    nominal_charge_capacity: Option<i32>,
+    full_charge_capacity: Option<i32>,
+    remaining_capacity: Option<i32>,
+}
+
+#[derive(Debug, Clone, Default, Deserialize)]
+#[serde(default, rename_all = "PascalCase")]
+struct WithBatteryData {
+    battery_data: Option<BatteryDataNested>,
+}
+
+fn fill_capacities_from_battery_data(ioreg: &mut IORegistry, dic: &CFDictionary) {
+    let Ok(extra) = dict_into::<WithBatteryData>(dic.clone()) else {
+        return;
+    };
+    let Some(bd) = extra.battery_data else {
+        return;
+    };
+
+    // On macOS 27+, raw mAh capacities often live under BatteryData only.
+    if ioreg.apple_raw_current_capacity == 0 {
+        if let Some(v) = bd
+            .remaining_capacity
+            .or(bd.absolute_capacity)
+            .filter(|&v| v > 0)
+        {
+            ioreg.apple_raw_current_capacity = v;
+        }
+    }
+    if ioreg.apple_raw_max_capacity == 0 {
+        if let Some(v) = bd
+            .full_charge_capacity
+            .or(bd.nominal_charge_capacity)
+            .filter(|&v| v > 0)
+        {
+            ioreg.apple_raw_max_capacity = v;
+        }
+    }
+    if ioreg.design_capacity == 0 {
+        if let Some(v) = bd.design_capacity.filter(|&v| v > 0) {
+            ioreg.design_capacity = v;
+        }
+    }
+    if ioreg.absolute_capacity == 0 {
+        if let Some(v) = bd.absolute_capacity.filter(|&v| v > 0) {
+            ioreg.absolute_capacity = v;
+        }
+    }
+}
+
 /// Read local Mac battery / power telemetry from IORegistry.
 ///
 /// NOTE: `repr::IORegistry` and `IORegistry` share an identical field layout
@@ -268,9 +325,11 @@ pub fn get_mac_ioreg_dict() -> anyhow::Result<CFDictionary> {
 /// panic path tried to format the bogus error (seen on macOS 27 / new plists).
 pub fn get_mac_ioreg() -> anyhow::Result<IORegistry> {
     let dic = get_mac_ioreg_dict()?;
-    let ioreg = dict_into::<repr::IORegistry>(dic)
+    let ioreg = dict_into::<repr::IORegistry>(dic.clone())
         .map_err(|e| anyhow::anyhow!("failed to parse AppleSmartBattery IORegistry: {e}"))?;
-    Ok(unsafe { mem::transmute::<repr::IORegistry, IORegistry>(ioreg) })
+    let mut ioreg = unsafe { mem::transmute::<repr::IORegistry, IORegistry>(ioreg) };
+    fill_capacities_from_battery_data(&mut ioreg, &dic);
+    Ok(ioreg)
 }
 
 #[derive(Debug)]
