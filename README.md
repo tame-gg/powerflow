@@ -36,6 +36,7 @@ SQLX_OFFLINE=true cargo build -p powerflow
 
 ```bash
 brew tap tame-gg/tap
+brew trust tame-gg/tap   # Homebrew 6+
 brew install --cask powerflow
 ```
 
