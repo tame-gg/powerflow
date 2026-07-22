@@ -38,7 +38,7 @@ pub fn setup_menu(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
     let app_menu = SubmenuBuilder::new(app, "powerflow")
         .about(Some(
             AboutMetadataBuilder::new()
-                .authors(Some(vec!["Samuel Lyon.".to_string()]))
+                .authors(Some(vec!["tame-gg".to_string()]))
                 .license(Some(env!("CARGO_PKG_VERSION")))
                 .version(Some(env!("CARGO_PKG_VERSION")))
                 .build(),

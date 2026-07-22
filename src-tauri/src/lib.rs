@@ -143,15 +143,19 @@ pub fn create_specta() -> tauri_specta::Builder {
             HistoryRecordedEvent,
         ]);
 
+    // Dev-only frontend codegen. Never run (or panic) in packaged apps —
+    // cwd may be /Applications with a read-only bundle / no source tree.
+    // Note: shipped debug builds still have debug_assertions, so do not
+    // `.expect()` here; ignore export failures instead.
     #[cfg(debug_assertions)]
-    builder
-        .export(
+    {
+        let _ = builder.export(
             Typescript::default()
                 .bigint(BigIntExportBehavior::Number)
                 .header("// @ts-nocheck"),
             "../src/bindings.ts",
-        )
-        .expect("Failed to export typescript bindings");
+        );
+    }
 
     builder
 }

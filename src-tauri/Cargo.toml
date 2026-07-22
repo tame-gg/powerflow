@@ -1,8 +1,8 @@
 [package]
 name = "powerflow"
-version = "0.2.2"
+version = "0.2.4-macos27"
 description = "Monitoring power usage of mac and iOS devices"
-authors = [ "Samuel Lyon" ]
+authors = [ "tame-gg" ]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
