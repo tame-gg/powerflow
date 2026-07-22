@@ -7,23 +7,61 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Dependencies / frontend build
+node_modules/
+dist/
+dist-ssr/
 *.local
 
-# Editor directories and files
+# Rust / Cargo
+target/
+Cargo.lock.bak
+
+# Tauri / local packaging
+src-tauri/target/
+*.dmg
+*.app
+!src-tauri/icons/**
+*.pkg
+*.ipa
+*.xcarchive
+DerivedData/
+.build/
+build/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+Pods/
+Carthage/Build/
+.swiftpm/config/registries.json
+.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
+Package.resolved.bak
+
+# Editor / OS
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.swp
+*~
 
-target
+# Env / local data
 .auto-imports
 .env
+.env.*
+!.env.example
 db.sqlite
+*.sqlite
+*.sqlite-journal
+
+# Release scratch / local installers
+/release/
+/out/
+*.tar.gz
+*.zip
+!locales/**/*.json

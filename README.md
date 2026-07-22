@@ -1,52 +1,46 @@
-# Powerflow
+# Powerflow (macOS 27)
 
-![Powerflow Screenshot](https://raw.githubusercontent.com/lzt1008/powerflow/assets/screenshot.png)
+Fork of [lzt1008/powerflow](https://github.com/lzt1008/powerflow) with fixes for **macOS 27 beta** (Darwin 27).
 
-Powerflow is a macOS application designed to monitor the **power usage** and **charging status** of your devices. With Powerflow, you can gain insights into your device's power consumption.
+Powerflow monitors Mac power usage and charging status from the menu bar / tray.
 
-## Features
+## macOS 27 changes
 
-- 🖥️ **Monitoring**: Monitor your Mac and iOS devices power consumption and charging status in real-time.
-- 📊 **Detailed Insights**: View historical power usage and charging trends.
-- 🚀 **Lightweight and Fast**: Designed with performance in mind for seamless operation.
+Upstream `v0.2.2` can flash-quit on launch under macOS 27 because IORegistry / `AppleSmartBattery` plists changed shape. A bad `Result` transmute then turned parse failures into a SIGSEGV while panicking.
 
----
+This fork:
 
-## Installation
+- Fixes the IORegistry `Result` transmute / panic path (no more launch SIGSEGV)
+- Makes IORegistry serde resilient with `serde(default)`
+- Falls back to SMC-only metrics when IORegistry parse fails
+- Restores mAh capacity fields from nested `BatteryData` when top-level keys are missing on macOS 27
 
-### Manual Installation
-1. Download the latest `.dmg` file from the [Releases](https://github.com/lzt1008/powerflow/releases) page.
-2. Open the `.dmg` file and drag the Powerflow app to your Applications folder.
-3. If you encounter an error, try the following steps:
-- Open **System Preferences** > **Security & Privacy**.
-- In the **General** tab, you will see a message about Powerflow being blocked.
-- Click **"Open Anyway"**.
-- Confirm the dialog that appears by clicking **"Open"**.
+Upstream issue/PR context: [lzt1008/powerflow#17](https://github.com/lzt1008/powerflow/issues/17), [PR #21](https://github.com/lzt1008/powerflow/pull/21).
 
-### Install via Homebrew
+## Build
 
-Open your terminal and run the following command:
+Requires Rust, Node, and pnpm:
 
 ```bash
-brew tap lzt1008/powerflow
-brew install --cask powerflow
+pnpm install
+SQLX_OFFLINE=true pnpm tauri build
 ```
 
-## Contributing
+Debug binary:
 
-We welcome contributions! Here's how you can help:
+```bash
+SQLX_OFFLINE=true cargo build -p powerflow
+```
 
-1. Fork the repository.
-2. Create a new branch for your feature or bugfix.
-3. Commit your changes and push them to your branch.
-4. Create a pull request for review.
+## Install / run
+
+If a release asset is attached, download it from [Releases](https://github.com/tame-gg/powerflow/releases), clear quarantine if needed, and open:
+
+```bash
+xattr -cr /Applications/Powerflow.app
+open /Applications/Powerflow.app
+```
 
 ## License
 
-Powerflow is released under the [MIT License](https://github.com/lzt1008/powerflow/blob/main/LICENSE). Feel free to use, modify, and distribute this software as per the license terms.
-
-## Feedback and Support
-
-We'd love to hear from you! If you have any feedback, issues, or suggestions, please [open an issue](https://github.com/lzt1008/powerflow/issues) on GitHub
-
-Thank you for using Powerflow! 🚀
+MIT — see [LICENSE](LICENSE). Original project by [lzt1008](https://github.com/lzt1008/powerflow).
