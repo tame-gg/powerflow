@@ -32,9 +32,18 @@ Debug binary:
 SQLX_OFFLINE=true cargo build -p powerflow
 ```
 
-## Install / run
+## Install via Homebrew
 
-If a release asset is attached, download it from [Releases](https://github.com/tame-gg/powerflow/releases), clear quarantine if needed, and open:
+```bash
+brew tap tame-gg/tap
+brew install --cask powerflow
+```
+
+Tap: [tame-gg/homebrew-tap](https://github.com/tame-gg/homebrew-tap). Builds are unsigned, so the cask clears Gatekeeper quarantine after install.
+
+## Install / run (manual)
+
+Download from [Releases](https://github.com/tame-gg/powerflow/releases/tag/v0.2.3-macos27), clear quarantine if needed, and open:
 
 ```bash
 xattr -cr /Applications/Powerflow.app
