@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/JetBrainsMono-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: url('./fonts/JetBrainsMono-Medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/InstrumentSerif-Regular.woff2') format('woff2');
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -10,29 +34,49 @@
 
 @layer base {
   :root {
+    color-scheme: light;
+
     --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 221 83% 53%;
-    --chart-2: 200 98% 39%;
-    --chart-3: 170 20% 60%;
-    --radius: 0.5rem;
+    --foreground: 240 3% 12%;
+    --card: 0 0% 98%;
+    --card-foreground: 240 3% 12%;
+    --popover: 0 0% 98%;
+    --popover-foreground: 240 3% 12%;
+    --primary: 41 78% 33%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 94%;
+    --secondary-foreground: 240 3% 12%;
+    --muted: 240 4% 90%;
+    --muted-foreground: 240 2% 46%;
+    --accent: 0 0% 94%;
+    --accent-foreground: 240 3% 12%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 165 63% 33%;
+    --warn: 32 95% 44%;
+    --border: 240 3% 88%;
+    --input: 240 1% 73%;
+    --ring: 41 78% 33%;
+    --radius: 8px;
+
+    --surface: linear-gradient(180deg, #ffffff 0%, #f7f7f8 100%);
+    --popover-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    --scrollbar-thumb: 240 3% 82%;
+
+    --hue-gold: 32 95% 44%;
+    --hue-teal: 165 63% 33%;
+    --hue-steel: 225 35% 48%;
+    --hue-violet: 250 47% 56%;
+    --hue-lime: 86 64% 33%;
+    --hue-cyan: 190 83% 32%;
+    --hue-coral: 18 65% 47%;
+    --hue-rose: 355 40% 52%;
+    --hue-neutral: 240 2% 46%;
+
+    --chart-1: var(--hue-gold);
+    --chart-2: var(--hue-steel);
+    --chart-3: var(--hue-violet);
+    --chart-4: var(--hue-teal);
 
     --vis-tooltip-background-color: none !important;
     --vis-tooltip-border-color: none !important;
@@ -44,28 +88,52 @@
     --vis-primary-color: var(--chart-1);
     --vis-secondary-color: var(--chart-2);
     --vis-text-color: var(--muted-foreground);
+    --vis-font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+    --vis-axis-tick-label-font-size: 10px;
+    --vis-axis-grid-color: hsl(var(--border));
+    --vis-crosshair-line-stroke-color: hsl(var(--input));
+    --vis-legend-label-color: hsl(var(--muted-foreground));
+    --vis-legend-label-font-size: 11px;
+    --vis-legend-bullet-size: 8px;
   }
   :root.dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
+    color-scheme: dark;
 
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 94.9%;
+    --card: 0 0% 7.1%;
+    --card-foreground: 0 0% 94.9%;
+    --popover: 0 0% 7.1%;
+    --popover-foreground: 0 0% 94.9%;
+    --primary: 42 78% 60%;
+    --primary-foreground: 0 0% 3.9%;
+    --secondary: 0 0% 9.4%;
+    --secondary-foreground: 0 0% 94.9%;
+    --muted: 0 0% 12.5%;
+    --muted-foreground: 0 0% 54.1%;
+    --accent: 0 0% 12.5%;
+    --accent-foreground: 0 0% 94.9%;
+    --destructive: 353 81% 65%;
+    --destructive-foreground: 0 0% 3.9%;
+    --success: 91 57% 57%;
+    --warn: 35 78% 60%;
+    --border: 0 0% 11.8%;
+    --input: 0 0% 17.3%;
+    --ring: 42 78% 60%;
+
+    --surface: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015));
+    --popover-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    --scrollbar-thumb: 0 0% 17.3%;
+
+    --hue-gold: 35 78% 60%;
+    --hue-teal: 162 55% 51%;
+    --hue-steel: 215 89% 66%;
+    --hue-violet: 256 80% 71%;
+    --hue-lime: 91 57% 57%;
+    --hue-cyan: 188 66% 59%;
+    --hue-coral: 19 85% 66%;
+    --hue-rose: 342 81% 68%;
+    --hue-neutral: 0 0% 54.1%;
   }
 }
 
@@ -74,10 +142,61 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
-
-    font-family: 'SF Compact', 'SF Pro Icons', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-    -webkit-font-smoothing: antialiased;
+    @apply bg-background text-foreground font-sans text-[13px] leading-[1.45] antialiased tabular-nums;
     overflow: hidden;
+    user-select: none;
+    cursor: default;
+  }
+  input,
+  [contenteditable] {
+    user-select: text;
+  }
+  a,
+  button,
+  [role='button'],
+  [role='menuitem'],
+  [role='tab'] {
+    cursor: default;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--scrollbar-thumb));
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+}
+
+@layer components {
+  .caption {
+    @apply font-mono text-[10px] font-medium uppercase leading-3 tracking-[0.08em] text-muted-foreground;
+  }
+  .wordmark {
+    @apply font-sans text-[11px] font-semibold uppercase leading-none tracking-[0.16em] text-muted-foreground;
+  }
+  .readout {
+    @apply font-serif font-normal tracking-[-0.01em] tabular-nums whitespace-nowrap;
+  }
+  .chip {
+    @apply inline-flex h-5 items-center gap-1 whitespace-nowrap rounded-lg border border-input bg-secondary px-1.5 font-mono text-[11px] font-medium text-muted-foreground;
+  }
+  .chip-accent {
+    @apply border-primary/40 bg-primary/10 text-primary;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

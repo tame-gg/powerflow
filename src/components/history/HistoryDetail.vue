@@ -51,25 +51,25 @@ async function exportData() {
 <template>
   <div class="h-full overflow-y-auto">
     <div v-if="isLoading" class="w-full h-full flex items-center justify-center">
-      <Loader2 class="animate-spin" />
+      <Loader2 class="animate-spin text-muted-foreground" />
     </div>
-    <div v-else-if="error" class="w-full h-full flex items-center justify-center text-red-500">
+    <div v-else-if="error" class="flex h-full w-full items-center justify-center text-destructive">
       {{ error }}
     </div>
     <div v-else class="px-6 pb-8">
       <div class="flex justify-between items-center">
         <div>
-          <h1 class="text-2xl font-bold">
+          <h1 class="font-serif text-2xl leading-none">
             {{ name || 'Unknown' }}
           </h1>
-          <h2 class="text-sm font-bold mt-1 text-muted-foreground">
+          <h2 class="mt-1.5 text-xs text-muted-foreground">
             with {{ adapterName }}
           </h2>
         </div>
         <div>
           <DropdownMenu>
-            <DropdownMenuTrigger class="p-2 rounded-md hover:bg-muted transition-colors">
-              <EllipsisVertical class="w-4 h-4" />
+            <DropdownMenuTrigger class="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+              <EllipsisVertical class="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent
               :side-offset="10"
@@ -78,12 +78,12 @@ async function exportData() {
               <DropdownMenuItem
                 @click="exportData"
               >
-                <Download class="w-4 h-4" />
+                <Download />
                 Export Data
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                class="text-red-500 focus:text-red-500 focus:bg-red-500/10"
+                class="text-destructive focus:bg-destructive/10 focus:text-destructive [&>svg]:text-destructive"
                 @click="() => {
                   commands.deleteHistoryById(id)
                   selectedItem = null
@@ -99,10 +99,10 @@ async function exportData() {
       </div>
       <div class="mt-4 grid gap-4 grid-cols-3">
         <div class="space-y-2">
-          <div class="text-sm font-medium text-muted-foreground">
+          <div class="caption">
             Duration
           </div>
-          <div class="text-2xl font-bold">
+          <div class="readout text-[28px] leading-8">
             {{ formatDuration(
               intervalToDuration({
                 start: timestamp * 1000,
@@ -112,35 +112,35 @@ async function exportData() {
             )
             }}
           </div>
-          <div class="text-xs text-muted-foreground">
+          <div class="text-[11px] text-muted-foreground">
             {{ format(timestamp * 1000, 'yyyy-MM-dd HH:mm') }}
           </div>
         </div>
         <div class="space-y-2">
-          <div class="text-sm font-medium text-muted-foreground">
+          <div class="caption">
             Avg Power
           </div>
-          <div class="text-2xl font-bold">
+          <div class="readout text-[28px] leading-8">
             {{ data.avg.adapterPower.toFixed(1) }}W
           </div>
-          <div class="text-xs text-muted-foreground">
+          <div class="text-[11px] text-muted-foreground">
             Peak: {{ data.peak.adapterPower.toFixed(1) }}W
           </div>
         </div>
         <div class="space-y-2">
-          <div class="text-sm font-medium text-muted-foreground">
+          <div class="caption">
             Charging rate
           </div>
-          <div class="text-2xl font-bold">
+          <div class="readout text-[28px] leading-8">
             {{ ((endLevel - fromLevel) / chargingTime * 60).toFixed(2) }}%/min
           </div>
-          <div class="text-xs text-muted-foreground">
+          <div class="text-[11px] text-muted-foreground">
             Avg Temp: {{ data.avg.temperature.toFixed(1) }}°C
           </div>
         </div>
       </div>
 
-      <h2 class="mt-8 font-bold">
+      <h2 class="caption mt-8">
         Charging Curve
       </h2>
       <LineChart
@@ -152,28 +152,34 @@ async function exportData() {
         :show-legend="false"
       />
 
-      <h2 class="mt-8 font-bold">
+      <h2 class="caption mt-8">
         Additional Detail
       </h2>
-      <div class="mt-2 grid gap-4 text-sm">
+      <div class="mt-3 grid gap-4 text-xs">
         <div class="grid grid-cols-2 gap-4">
           <div>
             <div class="text-muted-foreground">
               Temperature Peak
             </div>
-            <div>{{ data.peak.temperature.toFixed(1) }}°C</div>
+            <div class="font-mono">
+              {{ data.peak.temperature.toFixed(1) }}°C
+            </div>
           </div>
           <div>
             <div class="text-muted-foreground">
               Adapter Power Peak
             </div>
-            <div>{{ data.peak.adapterPower.toFixed(1) }}W</div>
+            <div class="font-mono">
+              {{ data.peak.adapterPower.toFixed(1) }}W
+            </div>
           </div>
           <div>
             <div class="text-muted-foreground">
               Adapter Watts
             </div>
-            <div>{{ data.peak.adapterWatts }}W({{ data.peak.adapterVoltage }}V, {{ data.peak.adapterAmperage }}A)</div>
+            <div class="font-mono">
+              {{ data.peak.adapterWatts }}W({{ data.peak.adapterVoltage }}V, {{ data.peak.adapterAmperage }}A)
+            </div>
           </div>
         </div>
       </div>

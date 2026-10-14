@@ -65,14 +65,14 @@ onMounted(() => {
     ref="t"
     v-bind="delegatedProps"
     :class="cn(
-      'inline-flex items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground ',
+      'inline-flex h-7 items-center justify-center rounded-lg border border-input bg-background p-px text-muted-foreground',
       props.class,
     )"
   >
     <slot />
   </TabsList>
   <div
-    class="absolute rounded-md bg-background shadow-sm"
+    class="absolute rounded-[6px] bg-secondary shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
     :class="transitionClass"
     :style
   />

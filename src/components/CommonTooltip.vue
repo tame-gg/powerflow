@@ -25,7 +25,7 @@ defineProps<TooltipProps>()
       <TooltipTrigger :as :as-child>
         <slot />
       </TooltipTrigger>
-      <TooltipContent :side :align class="font-bold">
+      <TooltipContent :side :align class="font-medium">
         <slot name="popper">
           {{ content }}
         </slot>
