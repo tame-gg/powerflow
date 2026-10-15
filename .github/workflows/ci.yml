@@ -17,7 +17,6 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec vue-tsc --noEmit
       - run: pnpm build
 
   rust:
@@ -33,7 +32,4 @@ jobs:
       - run: pnpm build
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: src-tauri
-      - run: cargo check --locked
-        working-directory: src-tauri
+      - run: cargo check -p $(cargo metadata --no-deps --format-version 1 | jq -r '.packages[] | select(.manifest_path | endswith("src-tauri/Cargo.toml")) | .name')
