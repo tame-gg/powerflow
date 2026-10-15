@@ -12,8 +12,8 @@ defineProps<{
 </script>
 
 <template>
-  <Card class="text-sm">
-    <CardHeader v-if="title" class="p-3 border-b">
+  <Card class="bg-popover text-xs shadow-popover ring-1 ring-foreground/10">
+    <CardHeader v-if="title" class="border-b p-3">
       <CardTitle>
         {{ title }}
       </CardTitle>
@@ -33,7 +33,7 @@ defineProps<{
           </span>
           <span>{{ item.name }}</span>
         </div>
-        <span class="font-semibold ml-4">{{ item.value }}</span>
+        <span class="ml-4 font-mono font-medium">{{ item.value }}</span>
       </div>
     </CardContent>
   </Card>

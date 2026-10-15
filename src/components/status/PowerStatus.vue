@@ -12,7 +12,7 @@ const div = h('div')
     :class="{ 'flex-1 bg-transparent border-none shadow-none': isPopover }"
   >
     <CardHeader class="space-y-0 pb-2 gap-y-0">
-      <CardTitle class="flex items-center justify-between gap-2 text-base truncate">
+      <CardTitle class="flex items-center justify-between gap-2 truncate text-[14px]">
         <PowerStatusTitle />
       </CardTitle>
       <CardDescription class="text-[10px] font-mono flex gap-[2px] items-center">

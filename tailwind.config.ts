@@ -19,6 +19,11 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['system-ui', '-apple-system', 'Inter', 'SF Pro Text', 'Segoe UI Variable Text', 'Segoe UI', 'sans-serif'],
+        mono: ['JetBrains Mono', 'ui-monospace', 'SF Mono', 'Cascadia Mono', 'Menlo', 'Consolas', 'monospace'],
+        serif: ['Instrument Serif', 'Georgia', 'serif'],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -53,12 +58,31 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        success: 'hsl(var(--success))',
+        warn: 'hsl(var(--warn))',
+        hue: {
+          gold: 'hsl(var(--hue-gold))',
+          teal: 'hsl(var(--hue-teal))',
+          steel: 'hsl(var(--hue-steel))',
+          violet: 'hsl(var(--hue-violet))',
+          lime: 'hsl(var(--hue-lime))',
+          cyan: 'hsl(var(--hue-cyan))',
+          coral: 'hsl(var(--hue-coral))',
+          rose: 'hsl(var(--hue-rose))',
+          neutral: 'hsl(var(--hue-neutral))',
+        },
+      },
+      backgroundImage: {
+        surface: 'var(--surface)',
+      },
+      boxShadow: {
+        popover: 'var(--popover-shadow)',
       },
       borderRadius: {
-        xl: 'calc(var(--radius) + 4px)',
+        xl: 'calc(var(--radius) * 1.4)',
         lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        md: 'calc(var(--radius) * 0.8)',
+        sm: 'calc(var(--radius) * 0.6)',
       },
       keyframes: {
         'accordion-down': {

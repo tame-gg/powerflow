@@ -4,6 +4,8 @@ Fork of [lzt1008/powerflow](https://github.com/lzt1008/powerflow) with fixes for
 
 Powerflow monitors Mac power usage and charging status from the menu bar / tray.
 
+Powerflow is a [tame.gg](https://tame.gg) project.
+
 ## macOS 27 changes
 
 Upstream `v0.2.2` can flash-quit on launch under macOS 27 because IORegistry / `AppleSmartBattery` plists changed shape. A bad `Result` transmute then turned parse failures into a SIGSEGV while panicking.

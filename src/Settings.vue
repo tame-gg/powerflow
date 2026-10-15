@@ -59,11 +59,11 @@ interface SettingsItemProps {
 function SettingsItem(props: SettingsItemProps, { slots }: SetupContext) {
   return (
     <div class="flex items-center justify-between">
-      <div class="flex gap-4">
-        { h(props.icon, { class: 'size-5' }) }
-        <div class="flex flex-col gap-2">
+      <div class="flex gap-3">
+        { h(props.icon, { class: 'mt-px size-4 text-muted-foreground' }) }
+        <div class="flex flex-col gap-1.5">
           <Label class="font-medium">{props.name}</Label>
-          <span class="text-xs text-muted-foreground mr-4">
+          <span class="mr-4 text-xs text-muted-foreground">
             {props.description}
           </span>
         </div>
@@ -81,7 +81,7 @@ interface SettingsSectionProps {
 function SettingsSection(props: SettingsSectionProps) {
   return (
     <div>
-      <h3 class="flex items-center gap-2 text-xl font-black">
+      <h3 class="caption flex items-center gap-2">
         {/* {h(props.icon, { class: 'h-5 w-5' })} */}
         {props.title}
       </h3>
@@ -92,7 +92,7 @@ function SettingsSection(props: SettingsSectionProps) {
 
 <template>
   <div data-tauri-drag-region class="h-6" />
-  <div class="space-y-8 mt-6 px-8 bg-background overflow-y-scroll h-dvh">
+  <div class="mt-4 h-dvh space-y-6 overflow-y-scroll bg-background px-8">
     <!-- Appearance Section -->
     <SettingsSection :title="$t('settings.appearance')" :icon="Eye" />
     <div class="space-y-6">
@@ -162,7 +162,6 @@ function SettingsSection(props: SettingsSectionProps) {
           v-else
           id="animations"
           v-model:checked="preference.animationsEnabled"
-          class="data-[state=checked]:bg-blue-500"
         />
       </SettingsItem>
     </div>
@@ -208,7 +207,6 @@ function SettingsSection(props: SettingsSectionProps) {
       >
         <Switch
           id="background-monitoring"
-          class="data-[state=checked]:bg-blue-500"
           disabled
           checked
         />
@@ -244,7 +242,7 @@ function SettingsSection(props: SettingsSectionProps) {
         :description="$t('settings.show_charging_power_desc')"
         :icon="BatteryCharging"
       >
-        <Switch v-model:checked="preference.statusBarShowCharging" class="data-[state=checked]:bg-blue-500" />
+        <Switch v-model:checked="preference.statusBarShowCharging" />
       </SettingsItem>
     </div>
 
@@ -278,43 +276,50 @@ function SettingsSection(props: SettingsSectionProps) {
 
     <!-- About Section -->
     <SettingsSection :title="$t('settings.about')" :icon="Wallet" />
+    <p class="text-xs text-muted-foreground">
+      A tame.gg project. Based on
+      <a
+        class="text-primary underline-offset-2 hover:underline"
+        @click="open('https://github.com/lzt1008/powerflow')"
+      >Powerflow by lzt1008</a>, MIT license.
+    </p>
     <div class="grid grid-cols-2 gap-4">
       <div>
-        <div class="text-sm font-medium text-muted-foreground">
+        <div class="caption">
           {{ $t('settings.version') }}
         </div>
-        <div class="text-sm">
+        <div class="mt-1.5 font-mono text-[13px]">
           {{ version }}
         </div>
       </div>
       <div>
-        <div class="text-sm font-medium text-muted-foreground">
+        <div class="caption">
           {{ $t('settings.build') }}
         </div>
-        <div class="text-sm flex items-center">
+        <div class="mt-1.5 flex items-center font-mono text-[13px]">
           {{ commitHash.slice(0, 7) }}
           <a
-            class="ml-2 mr-1 text-xs text-muted-foreground underline flex items-center gap-1 cursor-pointer"
+            class="ml-2 mr-1 flex items-center gap-1 text-xs text-primary underline-offset-2 hover:underline"
             @click="open(`https://github.com/tame-gg/powerflow/commit/${commitHash}`)"
           >
             View on GitHub
-            <ExternalLink class="size-3 text-muted-foreground" />
+            <ExternalLink class="size-3" />
           </a>
         </div>
       </div>
       <div>
-        <div class="text-sm font-medium text-muted-foreground">
+        <div class="caption">
           {{ $t('settings.license') }}
         </div>
-        <div class="text-sm">
+        <div class="mt-1.5 text-[13px]">
           MIT License
         </div>
       </div>
       <div>
-        <div class="text-sm font-medium text-muted-foreground">
+        <div class="caption">
           {{ $t('settings.author') }}
         </div>
-        <div class="text-sm">
+        <div class="mt-1.5 text-[13px]">
           tame-gg
         </div>
       </div>

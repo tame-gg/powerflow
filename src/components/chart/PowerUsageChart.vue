@@ -43,7 +43,7 @@ watch([localeMap, () => power.value.isCharging], async () => {
 <template>
   <Card class="w-full space-y-8 relative">
     <CardHeader class="pb-0">
-      <CardTitle>
+      <CardTitle class="caption">
         {{ $t('power_usage') }}
       </CardTitle>
     </CardHeader>
@@ -51,13 +51,13 @@ watch([localeMap, () => power.value.isCharging], async () => {
       <Skeleton v-if="power.isLoading || loading" class="w-full h-[240px]" />
       <LineChart
         v-else
-        class="w-full h-[240px] font-bold"
+        class="h-[240px] w-full"
         index="time"
         :y-formatter="(value) => `${value}w`"
         :data="localedData"
         :categories="localedCategories"
         :custom-tooltip="CustomChartTooltip"
-        :colors="['#2563eb', '#60a5fa', '#818cf8', '#0891b2']"
+        :colors="['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))']"
       />
     </CardContent>
   </Card>

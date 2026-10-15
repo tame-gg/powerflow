@@ -15,9 +15,9 @@ const formatter = new Intl.NumberFormat('en-US', {
 </script>
 
 <template>
-  <Card class="text-sm">
+  <Card class="bg-popover text-xs shadow-popover ring-1 ring-foreground/10">
     <CardContent class="p-3 min-w-[100px] flex flex-col gap-2">
-      <div v-if="title" class="font-bold">
+      <div v-if="title" class="caption">
         {{ title }}
       </div>
       <div v-for="(item, key) in data.filter(i => i.name)" :key="key" class="flex justify-between">
@@ -34,7 +34,7 @@ const formatter = new Intl.NumberFormat('en-US', {
           </span>
           <span class="text-xs text-muted-foreground">{{ item.name }}</span>
         </div>
-        <span class="text-xs font-semibold ml-4 font-mono">{{
+        <span class="ml-4 font-mono text-xs font-medium">{{
           typeof item.value === 'number' ? formatter.format(item.value) : item.value
         }}{{ item.name.toLowerCase().includes('level') ? '%' : 'w' }}</span>
       </div>

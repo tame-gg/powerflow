@@ -11,25 +11,25 @@ const { t } = useI18n()
   <div class="flex flex-col gap-2">
     <div class="flex items-center justify-between">
       <div v-if="!power.isLoading" class="flex items-center gap-2">
-        <BatteryCharging v-if="power.isCharging" class="size-5 text-blue-500" />
+        <BatteryCharging v-if="power.isCharging" class="size-5 text-primary" />
         <BatteryFull v-else-if="power.batteryLevel > 66" class="size-5" />
         <BatteryMedium v-else-if="power.batteryLevel > 33" class="size-5" />
         <BatteryLow
           v-else
           class="size-5"
           :class="{
-            'text-red-500': power.batteryLevel < 10,
+            'text-destructive': power.batteryLevel < 10,
           }"
         />
-        <span class="text-xl font-bold mr-4">
+        <span class="mr-4 font-mono text-lg font-medium">
           {{ power.batteryLevel.toFixed(2) }}%</span>
       </div>
       <Skeleton v-else class="w-24 h-7" />
 
       <div
         v-if="!power.isLoading"
-        class="text-sm font-medium truncate"
-        :class="power.isCharging ? 'text-blue-500' : 'text-muted-foreground'"
+        class="truncate text-xs font-medium"
+        :class="power.isCharging ? 'text-primary' : 'text-muted-foreground'"
       >
         <span v-if="power.isCharging && power.batteryLevel === 100">{{ $t('status.fully_charged') }}</span>
         <template v-else>
