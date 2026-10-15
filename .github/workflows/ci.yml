@@ -32,4 +32,5 @@ jobs:
       - run: pnpm build
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - run: cargo check -p $(cargo metadata --no-deps --format-version 1 | jq -r '.packages[] | select(.manifest_path | endswith("src-tauri/Cargo.toml")) | .name')
+      - run: cargo check
+        working-directory: src-tauri
