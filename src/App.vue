@@ -21,7 +21,7 @@ watchEffect(() => {
     <TitleBar />
     <div
       ref="target"
-      class="h-[calc(100vh-52px)] pb-4"
+      class="h-[calc(100vh-var(--bar-h))]"
     >
       <TabsContent
         v-for="udid in ['local', ...Object.keys(data.remote)]"
@@ -35,8 +35,8 @@ watchEffect(() => {
             leave-to-class="opacity-0"
             enter-to-class="opacity-100"
             leave-from-class="opacity-100"
-            enter-active-class="duration-300"
-            leave-active-class="duration-300"
+            enter-active-class="duration-150 ease-out"
+            leave-active-class="duration-150 ease-out"
           >
             <Component :is="Component" />
           </Transition>
