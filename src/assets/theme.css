@@ -1,0 +1,825 @@
+/*
+ * Kestrel design system, ported for Powerflow.
+ *
+ * Source of truth: kestrel/src/app.css. Token names and values are carried
+ * over verbatim for the dark theme (Kestrel is dark-only); the light theme
+ * keeps the same token set with values inverted onto a white canvas so the
+ * existing theme preference keeps working. Tailwind maps onto these
+ * variables in tailwind.config.ts.
+ */
+
+:root {
+  /* Kestrel structure tokens */
+  --font: system-ui, -apple-system, Inter, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  --serif: "Instrument Serif", Georgia, serif;
+  --r: 8px;
+  --bar-h: 52px;
+  --ease: cubic-bezier(.2, .7, .3, 1);
+
+  /* Light counterpart of the Kestrel palette */
+  --rail: #f6f6f6;
+  --bg: #ffffff;
+  --well: #f7f7f7;
+  --hover: rgba(0, 0, 0, .04);
+  --raise: #f1f1f1;
+  --raise-2: #ebebeb;
+  --raise-3: #e3e3e3;
+  --line: rgba(0, 0, 0, .08);
+  --line-2: rgba(0, 0, 0, .14);
+  --tick: rgba(0, 0, 0, .22);
+  --grid: rgba(0, 0, 0, .05);
+  --text: #161616;
+  --text-2: rgba(22, 22, 22, .66);
+  --text-3: rgba(22, 22, 22, .48);
+  --text-4: rgba(22, 22, 22, .28);
+  --cpu: #2f74d8;
+  --mem: #7552d6;
+  --disk: #b9781a;
+  --net: #13916f;
+  --gpu: #d23f6c;
+  --battery: #5c9a24;
+  --sensors: #cf5f2c;
+  --ports: #1f97ab;
+  --projects: #a87a12;
+  --warn: #b9781a;
+  --danger: #d23a4f;
+  --ok: #5c9a24;
+  --gold: #a87a12;
+  --warn-text: #9a6410;
+  --danger-text: #c02f44;
+  --surface: linear-gradient(180deg, #ffffff, #f5f5f5);
+  --pop-shadow: 0 16px 40px rgba(0, 0, 0, .14);
+  --flag-shadow: 0 4px 12px rgba(0, 0, 0, .12);
+  --track-shadow: inset 0 1px 0 rgba(0, 0, 0, .06);
+  --seg-on-shadow: inset 0 1px 0 rgba(255, 255, 255, .6);
+  --selection: rgba(168, 122, 18, .22);
+
+  color-scheme: light;
+}
+
+:root.dark {
+  /* Kestrel palette, verbatim */
+  --rail: #0a0a0a;
+  --bg: #0a0a0a;
+  --well: #070707;
+  --hover: rgba(255, 255, 255, .05);
+  --raise: #121212;
+  --raise-2: #181818;
+  --raise-3: #202020;
+  --line: rgba(255, 255, 255, .08);
+  --line-2: rgba(255, 255, 255, .14);
+  --tick: rgba(255, 255, 255, .2);
+  --grid: rgba(255, 255, 255, .04);
+  --text: #f2f2f2;
+  --text-2: rgba(242, 242, 242, .64);
+  --text-3: rgba(242, 242, 242, .42);
+  --text-4: rgba(242, 242, 242, .24);
+  --cpu: #5b9cf5;
+  --mem: #9a7cf0;
+  --disk: #e9a84a;
+  --net: #3fc79f;
+  --gpu: #ef6b93;
+  --battery: #8fcf52;
+  --sensors: #f28b5c;
+  --ports: #52c9dc;
+  --projects: #e8b84a;
+  --warn: #e9a84a;
+  --danger: #ee5c6e;
+  --ok: #8fcf52;
+  --gold: #e8b84a;
+  --warn-text: #f0b862;
+  --danger-text: #ff8a98;
+  --surface: linear-gradient(180deg, rgba(255, 255, 255, .04), rgba(255, 255, 255, .015));
+  --pop-shadow: 0 16px 40px rgba(0, 0, 0, .5);
+  --flag-shadow: 0 4px 12px rgba(0, 0, 0, .5);
+  --track-shadow: inset 0 1px 0 rgba(0, 0, 0, .5);
+  --seg-on-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+  --selection: rgba(232, 184, 74, .28);
+
+  color-scheme: dark;
+}
+
+:root {
+  /*
+   * Powerflow readings mapped onto Kestrel's one-hue-per-metric palette.
+   * --accent is Kestrel's per-component accent, set inline on a subtree.
+   */
+  --system: var(--gold);
+  --screen: var(--cpu);
+  --soc: var(--mem);
+  --adapter: var(--net);
+  --charge: var(--battery);
+  --loss: var(--sensors);
+  --temp: var(--sensors);
+  --other: var(--text-4);
+  --accent: var(--gold);
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  cursor: default;
+}
+
+/* Kestrel sets 12px on html too; Tailwind sizes in rem, so keep the root at 16px. */
+body {
+  font-size: 12px;
+}
+
+input,
+[contenteditable] {
+  user-select: text;
+}
+
+a,
+button,
+[role="button"],
+[role="menuitem"],
+[role="option"],
+[role="tab"] {
+  cursor: default;
+}
+
+button:focus-visible,
+[tabindex]:not([role="option"], [role="menuitem"]):focus-visible,
+[role="combobox"]:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: -2px;
+  border-radius: var(--r);
+}
+
+svg {
+  display: block;
+  flex: none;
+}
+
+::selection {
+  background: var(--selection);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line-2);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* Type */
+
+.num {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+
+.t2 {
+  color: var(--text-2);
+}
+
+.t3 {
+  color: var(--text-3);
+}
+
+.ell {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.caption {
+  font-size: 10px;
+  line-height: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-3);
+}
+
+.wordmark {
+  font-size: 10px;
+  line-height: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  color: var(--text-3);
+}
+
+.nosig {
+  color: var(--text-4);
+}
+
+.readout {
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+}
+
+.readout small {
+  font-family: var(--font);
+  font-weight: 500;
+  color: var(--text-3);
+  margin-left: 4px;
+  letter-spacing: 0;
+}
+
+/* Surfaces */
+
+.well {
+  background: var(--well);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  box-shadow: none;
+}
+
+.pop {
+  background: var(--raise);
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  box-shadow: var(--pop-shadow);
+  color: var(--text);
+}
+
+.flag {
+  background: var(--raise-2);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r);
+  box-shadow: var(--flag-shadow);
+  color: var(--text);
+}
+
+/* Controls */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: var(--r);
+  border: 1px solid var(--line-2);
+  background: var(--surface);
+  box-shadow: none;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background 80ms linear;
+}
+
+.btn:hover {
+  background: var(--raise-3);
+}
+
+.btn:active {
+  transform: translateY(.5px);
+}
+
+.btn.ghost {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: var(--text-2);
+}
+
+.btn.ghost:hover {
+  background: var(--raise-3);
+}
+
+.btn.danger {
+  background: color-mix(in srgb, var(--danger) 16%, transparent);
+  border-color: color-mix(in srgb, var(--danger) 40%, transparent);
+  color: var(--danger-text);
+}
+
+.btn.danger:hover {
+  background: color-mix(in srgb, var(--danger) 24%, transparent);
+}
+
+.btn:disabled {
+  opacity: .5;
+  pointer-events: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 18px;
+  padding: 0 6px;
+  border-radius: var(--r);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  background: var(--raise-2);
+  border: 1px solid var(--line-2);
+  color: var(--text-2);
+}
+
+.chip.accent,
+.chip.warn,
+.chip.ok,
+.chip.danger {
+  border-color: transparent;
+}
+
+.chip.accent {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.chip.warn {
+  color: var(--warn-text);
+  background: color-mix(in srgb, var(--warn) 12%, transparent);
+}
+
+.chip.ok {
+  color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 12%, transparent);
+}
+
+.chip.danger {
+  color: var(--danger-text);
+  background: color-mix(in srgb, var(--danger) 14%, transparent);
+}
+
+.seg {
+  display: flex;
+  height: 24px;
+  padding: 1px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r);
+  background: var(--well);
+}
+
+.seg button,
+.seg [role="tab"] {
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.seg button:hover,
+.seg [role="tab"]:hover {
+  color: var(--text);
+}
+
+.seg button.on,
+.seg [role="tab"][data-state="active"] {
+  background: var(--raise-2);
+  color: var(--text);
+  box-shadow: var(--seg-on-shadow);
+}
+
+.seg button:disabled {
+  color: var(--text-4);
+}
+
+.winctl {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 28px;
+  border-radius: var(--r);
+  color: var(--text-2);
+  transition: background 80ms linear;
+}
+
+.winctl:hover,
+.winctl[data-state="open"],
+.winctl.on {
+  background: var(--raise);
+  color: var(--text);
+}
+
+/* Meters */
+
+.meter {
+  position: relative;
+  height: 4px;
+  min-width: 0;
+}
+
+.meter.bridge {
+  height: 6px;
+}
+
+.meter .track {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--well);
+  box-shadow: var(--track-shadow);
+  -webkit-mask-image: repeating-linear-gradient(90deg, #000 0 3px, transparent 3px 4px);
+  mask-image: repeating-linear-gradient(90deg, #000 0 3px, transparent 3px 4px);
+}
+
+.meter.redline .track {
+  background: linear-gradient(90deg, var(--well) 90%, color-mix(in srgb, var(--danger) 22%, transparent) 90%);
+}
+
+.meter.zones .track {
+  background: linear-gradient(90deg, var(--well) 75%, color-mix(in srgb, var(--warn) 18%, transparent) 75% 90%, color-mix(in srgb, var(--danger) 22%, transparent) 90%);
+}
+
+.meter .track i {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform-origin: left;
+  transition: transform 220ms var(--ease);
+}
+
+.meter .peak {
+  position: absolute;
+  top: -1px;
+  width: 2px;
+  height: 8px;
+  margin-left: -1px;
+  background: var(--text);
+  transition: left 400ms var(--ease);
+}
+
+.meter.bridge::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 1px);
+  height: 4px;
+  background:
+    linear-gradient(var(--tick), var(--tick)) 0 0 / 1px 4px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) 50% 0 / 1px 4px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) 100% 0 / 1px 4px no-repeat,
+    repeating-linear-gradient(90deg, var(--tick) 0 1px, transparent 1px 10%) 0 0 / 100% 2px no-repeat;
+}
+
+.prop {
+  display: flex;
+  gap: 2px;
+  height: 8px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.prop i {
+  min-width: 0;
+  transition: flex-grow 500ms ease, opacity 200ms linear;
+}
+
+.lg {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 20px;
+}
+
+.lg i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.lg .t {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lg b {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Panels */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  height: var(--bar-h);
+  padding: 0 8px 0 16px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.toolbar .title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.toolbar .title b {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 400;
+}
+
+.toolbar .title span {
+  color: var(--text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  margin-left: auto;
+}
+
+.tools .divider {
+  width: 1px;
+  height: 16px;
+  margin: 0 8px;
+  background: var(--line);
+}
+
+.th,
+.tr {
+  display: grid;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 24px;
+  background: var(--bg);
+}
+
+.tr {
+  height: 32px;
+  transition: background 80ms linear;
+}
+
+.tr:hover {
+  background: var(--hover);
+}
+
+.tr.tall {
+  height: 40px;
+}
+
+.group-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 16px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.group-head svg {
+  color: var(--accent);
+}
+
+.group-head b {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.group-head span {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.chan {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
+  column-gap: 8px;
+  row-gap: 4px;
+  align-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 32px;
+  padding: 8px 12px;
+  text-align: left;
+  color: var(--text-2);
+  transition: background 80ms linear;
+}
+
+.chan:hover {
+  background: var(--hover);
+}
+
+.chan > svg {
+  color: var(--text-3);
+}
+
+.chan.on {
+  color: var(--text);
+}
+
+.chan.on > svg {
+  color: var(--accent);
+}
+
+.chan.on::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--raise);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
+  border-block: 1px solid var(--line);
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 12px 16px;
+}
+
+.tile + .tile {
+  border-left: 1px solid var(--line);
+}
+
+.tile .k {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.tile .k svg {
+  color: var(--accent);
+}
+
+.tile .v {
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tile .s {
+  font-size: 11px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tile .meter {
+  margin-top: 8px;
+}
+
+.facts {
+  margin: 0;
+}
+
+.facts div {
+  display: flex;
+  align-items: baseline;
+  height: 20px;
+}
+
+.facts dt {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+  color: var(--text-3);
+}
+
+.facts dt::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px dotted var(--line-2);
+  transform: translateY(-4px);
+}
+
+.facts dd {
+  margin: 0 0 0 8px;
+  font-weight: 500;
+}
+
+.empty-state {
+  height: 100%;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+  color: var(--text-3);
+}
+
+.empty-state p {
+  max-width: 320px;
+  margin: 0;
+  color: var(--text-2);
+}
+
+/* Loading: Kestrel's scan line instead of a pulsing block */
+
+.scan {
+  position: relative;
+  overflow: hidden;
+  background: var(--well);
+  border-radius: var(--r);
+}
+
+.scan::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  background: var(--tick);
+  animation: scan 1.6s linear infinite;
+}
+
+@keyframes scan {
+  from {
+    left: 0;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes beat {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: .35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .btn:active {
+    transform: none;
+  }
+  .scan::after {
+    display: none;
+  }
+}
