@@ -41,7 +41,6 @@ function toggle(name: string) {
 const series = computed<ChartSeries[]>(() => categories.value.map(key => ({
   name: localeMap.value[key] || key,
   color: colorMap[key],
-  unit: 'W',
   values: power.value.statistics.map(item => Number(item[key] ?? 0)),
   inactive: inactive.value.has(localeMap.value[key] || key),
 })))
