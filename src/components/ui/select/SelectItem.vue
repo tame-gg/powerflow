@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils'
-import { CheckIcon } from '@radix-icons/vue'
+import { Check } from 'lucide-vue-next'
 import {
   SelectItem,
   SelectItemIndicator,
@@ -26,14 +26,14 @@ const forwardedProps = useForwardProps(delegatedProps)
     v-bind="forwardedProps"
     :class="
       cn(
-        'relative flex w-full cursor-default select-none items-center rounded-md py-1.5 pl-2 pr-8 text-[12.5px] outline-none focus:bg-muted focus:text-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+        'relative flex h-7 w-full cursor-default select-none items-center rounded py-0 pl-2 pr-8 text-xs text-fg-2 outline-none transition-colors duration-75 focus:bg-hover focus:text-fg data-[state=checked]:text-fg data-[disabled]:pointer-events-none data-[disabled]:text-fg-4 [&_svg]:text-fg-3',
         props.class,
       )
     "
   >
     <span class="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
       <SelectItemIndicator>
-        <CheckIcon class="size-4 text-primary" />
+        <Check class="size-3 text-gold" :stroke-width="2" />
       </SelectItemIndicator>
     </span>
 

@@ -27,7 +27,7 @@ function updateIndicator() {
 
   if (activeTab) {
     if (style.value.left && transitionClass.value.length === 0) {
-      transitionClass.value.push('transition-[left] duration-300 ease-in-out')
+      transitionClass.value.push('transition-[left] duration-200 ease-kestrel')
     }
     const activeRect = activeTab.getBoundingClientRect()
     style.value = {
@@ -65,14 +65,14 @@ onMounted(() => {
     ref="t"
     v-bind="delegatedProps"
     :class="cn(
-      'inline-flex h-7 items-center justify-center rounded-lg border border-input bg-background p-px text-muted-foreground',
+      'seg relative items-center',
       props.class,
     )"
   >
     <slot />
   </TabsList>
   <div
-    class="absolute rounded-[6px] bg-secondary shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+    class="absolute rounded-[3px] bg-raise-2 shadow-[var(--seg-on-shadow)]"
     :class="transitionClass"
     :style
   />
