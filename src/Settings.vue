@@ -16,10 +16,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
 import { open } from '@tauri-apps/plugin-shell'
-import { Activity, BadgeInfo, BatteryCharging, CircleDashed, ExternalLink, Eye, Gauge, Languages, Moon, Palette, RotateCw, Sun, SunMoon, Wallet } from 'lucide-vue-next'
+import { Activity, BadgeInfo, BatteryCharging, CircleDashed, ExternalLink, Eye, Gauge, Info, Languages, Moon, Palette, RotateCw, Sun, SunMoon } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { h, ref, watch } from 'vue'
 import { version } from '../package.json'
@@ -56,17 +55,16 @@ interface SettingsItemProps {
   icon: Component
 }
 
+// Kestrel row: 16px icon column, label over an 11px text-3 line, control right
 function SettingsItem(props: SettingsItemProps, { slots }: SetupContext) {
   return (
-    <div class="flex items-center justify-between">
-      <div class="flex gap-3">
-        { h(props.icon, { class: 'mt-px size-4 text-muted-foreground' }) }
-        <div class="flex flex-col gap-1.5">
-          <Label class="font-medium">{props.name}</Label>
-          <span class="mr-4 text-xs text-muted-foreground">
-            {props.description}
-          </span>
-        </div>
+    <div class="grid min-h-14 grid-cols-[16px_minmax(0,1fr)_auto] items-center gap-x-3 border-b border-line px-4 py-2.5 transition-colors duration-75 hover:bg-hover">
+      { h(props.icon, { 'size': 14, 'stroke-width': 2, 'class': 'self-start mt-px text-fg-3' }) }
+      <div class="flex min-w-0 flex-col gap-0.5">
+        <Label>{props.name}</Label>
+        <span class="mr-4 text-[11px] text-fg-3">
+          {props.description}
+        </span>
       </div>
       {slots.default ? slots.default() : null}
     </div>
@@ -78,24 +76,23 @@ interface SettingsSectionProps {
   icon: Component
 }
 
+// Kestrel .group header: sticky 28px strip, accent icon, 11px semibold label
 function SettingsSection(props: SettingsSectionProps) {
   return (
-    <div>
-      <h3 class="caption flex items-center gap-2">
-        {/* {h(props.icon, { class: 'h-5 w-5' })} */}
-        {props.title}
-      </h3>
+    <div class="group-head">
+      {h(props.icon, { 'size': 12, 'stroke-width': 2 })}
+      <b>{props.title}</b>
     </div>
   )
 }
 </script>
 
 <template>
-  <div data-tauri-drag-region class="h-6" />
-  <div class="mt-4 h-dvh space-y-6 overflow-y-scroll bg-background px-8">
+  <div data-tauri-drag-region class="h-7 border-b border-line" />
+  <div class="h-[calc(100dvh-28px)] overflow-y-auto bg-background" style="--accent: var(--gold)">
     <!-- Appearance Section -->
     <SettingsSection :title="$t('settings.appearance')" :icon="Eye" />
-    <div class="space-y-6">
+    <div>
       <SettingsItem
         :name="$t('settings.theme')"
         :description="$t('settings.theme_desc')"
@@ -108,20 +105,20 @@ function SettingsSection(props: SettingsSectionProps) {
           <SelectContent>
             <SelectGroup>
               <SelectItem value="system">
-                <div class="flex items-center">
-                  <SunMoon class="size-4 mr-3" />
+                <div class="flex items-center gap-2">
+                  <SunMoon :size="12" :stroke-width="2" />
                   {{ $t('settings.theme_system') }}
                 </div>
               </SelectItem>
               <SelectItem class="flex" value="light">
-                <div class="flex items-center">
-                  <Sun class="size-4 mr-3" />
+                <div class="flex items-center gap-2">
+                  <Sun :size="12" :stroke-width="2" />
                   {{ $t('settings.theme_light') }}
                 </div>
               </SelectItem>
               <SelectItem class="flex" value="dark">
-                <div class="flex items-center">
-                  <Moon class="size-4 mr-3" />
+                <div class="flex items-center gap-2">
+                  <Moon :size="12" :stroke-width="2" />
                   {{ $t('settings.theme_dark') }}
                 </div>
               </SelectItem>
@@ -157,7 +154,7 @@ function SettingsSection(props: SettingsSectionProps) {
         :description="$t('settings.animations_desc')"
         :icon="CircleDashed"
       >
-        <Skeleton v-if="loading" class="w-12 h-6" />
+        <Skeleton v-if="loading" class="h-[18px] w-8 rounded-full" />
         <Switch
           v-else
           id="animations"
@@ -166,14 +163,12 @@ function SettingsSection(props: SettingsSectionProps) {
       </SettingsItem>
     </div>
 
-    <Separator />
-
     <!-- Updates & Monitoring Section -->
     <SettingsSection
       :title="$t('settings.update_and_monitoring')"
       :icon="RotateCw"
     />
-    <div class="space-y-6">
+    <div>
       <SettingsItem
         :name="$t('settings.update_frequency')"
         :description="$t('settings.update_frequency_desc')"
@@ -272,59 +267,62 @@ function SettingsSection(props: SettingsSectionProps) {
       </div>
     </section> -->
 
-    <Separator />
-
-    <!-- About Section -->
-    <SettingsSection :title="$t('settings.about')" :icon="Wallet" />
-    <p class="text-xs text-muted-foreground">
-      A tame.gg project. Based on
-      <a
-        class="text-primary underline-offset-2 hover:underline"
-        @click="open('https://github.com/lzt1008/powerflow')"
-      >Powerflow by lzt1008</a>, MIT license.
-    </p>
-    <div class="grid grid-cols-2 gap-4">
+    <!-- About Section: Kestrel About window layout -->
+    <SettingsSection :title="$t('settings.about')" :icon="Info" />
+    <div class="flex flex-col items-center gap-1 border-b border-line px-4 pb-4 pt-6 text-center">
+      <span class="readout text-[28px] leading-8">Powerflow</span>
+      <p class="max-w-sm text-[11px] text-fg-3">
+        A tame.gg project. Based on
+        <a
+          class="text-gold underline-offset-2 hover:underline"
+          @click="open('https://github.com/lzt1008/powerflow')"
+        >Powerflow by lzt1008</a>, MIT license.
+      </p>
+    </div>
+    <dl class="m-0 grid grid-cols-2 border-b border-line text-center [&>div+div]:border-l [&>div:nth-child(3)]:border-l-0 [&>div:nth-child(n+3)]:border-t [&>div]:border-line [&>div]:py-3">
       <div>
-        <div class="caption">
+        <dt class="caption">
           {{ $t('settings.version') }}
-        </div>
-        <div class="mt-1.5 font-mono text-[13px]">
+        </dt>
+        <dd class="num m-0 mt-1 text-[13px]">
           {{ version }}
-        </div>
+        </dd>
       </div>
       <div>
-        <div class="caption">
+        <dt class="caption">
           {{ $t('settings.build') }}
-        </div>
-        <div class="mt-1.5 flex items-center font-mono text-[13px]">
-          {{ commitHash.slice(0, 7) }}
+        </dt>
+        <dd class="m-0 mt-1 flex items-center justify-center gap-2 text-[13px]">
+          <span class="num">{{ commitHash.slice(0, 7) }}</span>
           <a
-            class="ml-2 mr-1 flex items-center gap-1 text-xs text-primary underline-offset-2 hover:underline"
+            class="flex items-center gap-1 text-[11px] text-gold underline-offset-2 hover:underline"
             @click="open(`https://github.com/tame-gg/powerflow/commit/${commitHash}`)"
           >
             View on GitHub
-            <ExternalLink class="size-3" />
+            <ExternalLink :size="11" :stroke-width="2" />
           </a>
-        </div>
+        </dd>
       </div>
       <div>
-        <div class="caption">
+        <dt class="caption">
           {{ $t('settings.license') }}
-        </div>
-        <div class="mt-1.5 text-[13px]">
+        </dt>
+        <dd class="m-0 mt-1 text-[13px]">
           MIT License
-        </div>
+        </dd>
       </div>
       <div>
-        <div class="caption">
+        <dt class="caption">
           {{ $t('settings.author') }}
-        </div>
-        <div class="mt-1.5 text-[13px]">
+        </dt>
+        <dd class="m-0 mt-1 text-[13px]">
           tame-gg
-        </div>
+        </dd>
       </div>
-    </div>
-
-    <div class="h-8" />
+    </dl>
+    <footer class="flex flex-col items-center gap-0.5 py-6">
+      <span class="font-serif text-xl leading-6">tame<em class="not-italic text-gold">.gg</em></span>
+      <small class="text-[11px] text-fg-3">© 2026 tame.gg</small>
+    </footer>
   </div>
 </template>
