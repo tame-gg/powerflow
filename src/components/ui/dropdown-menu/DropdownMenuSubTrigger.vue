@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils'
-import { ChevronRightIcon } from '@radix-icons/vue'
+import { ChevronRight } from 'lucide-vue-next'
 import {
   DropdownMenuSubTrigger,
   type DropdownMenuSubTriggerProps,
@@ -23,11 +23,11 @@ const forwardedProps = useForwardProps(delegatedProps)
   <DropdownMenuSubTrigger
     v-bind="forwardedProps"
     :class="cn(
-      'flex cursor-default select-none items-center rounded-md px-2 py-1.5 text-[12.5px] outline-none focus:bg-accent data-[state=open]:bg-muted',
+      'flex h-7 cursor-default select-none items-center gap-2 rounded px-2 text-xs text-fg-2 outline-none transition-colors duration-75 focus:bg-hover focus:text-fg data-[state=open]:bg-hover',
       props.class,
     )"
   >
     <slot />
-    <ChevronRightIcon class="ml-auto h-4 w-4" />
+    <ChevronRight class="ml-auto size-3 text-fg-3" :stroke-width="2" />
   </DropdownMenuSubTrigger>
 </template>

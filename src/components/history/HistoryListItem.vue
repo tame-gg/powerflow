@@ -2,47 +2,33 @@
 import type { ChargingHistory } from '@/bindings'
 import { formatChargingDuration } from '@/lib/format'
 import { useTimeAgoOptions } from '@/lib/i18n'
-import { MobileIcon } from '@radix-icons/vue'
-import { ChevronRight, LaptopIcon } from 'lucide-vue-next'
+import { ArrowRight, Laptop, Smartphone } from 'lucide-vue-next'
 import { useI18n } from 'vue-i18n'
 
-const { timestamp, chargingTime } = defineProps<ChargingHistory>()
+const { timestamp, chargingTime, selected } = defineProps<ChargingHistory & { selected?: boolean }>()
 const { t } = useI18n()
 const timeAgoOptions = useTimeAgoOptions()
 const formatedUpdatetime = useTimeAgo(timestamp * 1000 + chargingTime * 1000, timeAgoOptions)
 </script>
 
 <template>
-  <div class="flex items-center justify-between rounded-lg border border-transparent px-3 py-2 transition-colors hover:bg-muted/50">
-    <div class="flex items-center">
-      <div class="py-2 h-min">
-        <MobileIcon v-if="isRemote" class="size-4 text-muted-foreground" />
-        <LaptopIcon v-else class="size-4 text-muted-foreground" />
-      </div>
-      <div class="flex flex-col ml-4">
-        <span class="flex gap-2 relative font-mono items-baseline">
-          <span class="flex items-baseline text-[13px] font-medium">
-            {{ fromLevel }}
-            <span class="text-xs ml-[2px]">%</span>
-            <ChevronRight class="mx-1 size-3.5 self-center text-muted-foreground" />
-            {{ endLevel }}
-            <span class="text-xs ml-[2px]">%</span>
-          </span>
-          <div class="text-muted-foreground font-mono text-xs truncate">
-            {{ formatChargingDuration(chargingTime, t) }}
-          </div>
-        </span>
-
-        <span class="text-muted-foreground font-mono text-xs truncate">{{ formatedUpdatetime }}</span>
-      </div>
-    </div>
-
-    <div class="w-24" />
-
-    <div class="flex items-center gap-4">
-      <div class="p-2">
-        <ChevronRight class="size-4 text-muted-foreground" />
-      </div>
-    </div>
-  </div>
+  <!-- Kestrel .chan row: icon, label + sub, readout; selected gets raise + accent rail -->
+  <button
+    class="chan shrink-0 border-b border-line py-2"
+    :class="{ on: selected }"
+    :aria-selected="selected"
+    style="--accent: var(--charge)"
+  >
+    <Smartphone v-if="isRemote" :size="14" :stroke-width="2" />
+    <Laptop v-else :size="14" :stroke-width="2" />
+    <span class="flex min-w-0 flex-col gap-0.5">
+      <span class="num flex items-center gap-1 text-xs font-medium text-fg">
+        {{ fromLevel }}%
+        <ArrowRight :size="11" :stroke-width="2" class="text-fg-3" />
+        {{ endLevel }}%
+      </span>
+      <span class="truncate text-[11px] text-fg-3">{{ formatedUpdatetime }}</span>
+    </span>
+    <span class="num text-[11px] text-fg-2">{{ formatChargingDuration(chargingTime, t) }}</span>
+  </button>
 </template>

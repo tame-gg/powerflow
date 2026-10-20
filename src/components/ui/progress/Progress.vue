@@ -22,18 +22,16 @@ const delegatedProps = computed(() => {
 </script>
 
 <template>
+  <!-- Kestrel meter: segmented track, accent fill -->
   <ProgressRoot
     v-bind="delegatedProps"
-    :class="
-      cn(
-        'relative h-2 w-full overflow-hidden rounded-full bg-muted',
-        props.class,
-      )
-    "
+    :class="cn('meter w-full', props.class)"
   >
-    <ProgressIndicator
-      class="h-full w-full flex-1 bg-primary transition-all"
-      :style="`transform: translateX(-${100 - (props.modelValue ?? 0)}%);`"
-    />
+    <div class="track">
+      <ProgressIndicator
+        as="i"
+        :style="{ transform: `scaleX(${Math.min(100, Math.max(0, props.modelValue ?? 0)) / 100})` }"
+      />
+    </div>
   </ProgressRoot>
 </template>

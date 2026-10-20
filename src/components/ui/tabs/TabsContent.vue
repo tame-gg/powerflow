@@ -14,7 +14,7 @@ const delegatedProps = computed(() => {
 
 <template>
   <TabsContent
-    :class="cn('mt-2 focus-visible:outline-none', props.class)"
+    :class="cn('focus-visible:outline-none', props.class)"
     v-bind="delegatedProps"
   >
     <slot />

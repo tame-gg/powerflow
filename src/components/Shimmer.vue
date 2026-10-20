@@ -37,13 +37,13 @@ const props = defineProps<ShimmerProps>()
     }"
     :class="cn(
       'relative inline-block bg-[length:250%_100%,auto]',
-      '[--base-color:hsl(var(--input))] [--base-gradient-color:hsl(var(--primary))]',
-      '[--bg:linear-gradient(90deg,#0000_calc(50%-var(--spread)),var(--base-gradient-color),#0000_calc(50%+var(--spread)))] [background-repeat:no-repeat,padding-box]',
+      '[--base-color:var(--line-2)] [--base-gradient-color:var(--accent)]',
+      '[--shimmer:linear-gradient(90deg,#0000_calc(50%-var(--spread)),var(--base-gradient-color),#0000_calc(50%+var(--spread)))] [background-repeat:no-repeat,padding-box]',
       props.class,
     )"
     :style="{
       '--spread': `${props.spread ?? 20}px`,
-      'background-image': 'var(--bg), linear-gradient(var(--base-color), var(--base-color))',
+      'background-image': 'var(--shimmer), linear-gradient(var(--base-color), var(--base-color))',
     }"
   >
     <slot />

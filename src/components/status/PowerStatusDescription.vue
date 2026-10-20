@@ -11,7 +11,7 @@ const formatedUpdatetime = useTimeAgo(updateTime, timeAgoOptions)
 </script>
 
 <template>
-  <div v-if="!power.isLoading">
+  <div v-if="!power.isLoading" class="truncate">
     {{ power.isCharging ? power.adapterName : $t('status.on_battery') }}
     <template v-if="!rawData.isLocal && rawData.offline">
       <span>·</span>
@@ -22,5 +22,5 @@ const formatedUpdatetime = useTimeAgo(updateTime, timeAgoOptions)
       {{ power.isRemote ? formatedUpdatetime : '' }}
     </template>
   </div>
-  <Skeleton v-else class="w-20 h-[10px]" />
+  <span v-else class="scan h-3 w-24" />
 </template>
