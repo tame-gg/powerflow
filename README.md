@@ -46,7 +46,7 @@ Tap: [tame-gg/homebrew-tap](https://github.com/tame-gg/homebrew-tap). Builds are
 
 ## Install / run (manual)
 
-Download from [Releases](https://github.com/tame-gg/powerflow/releases/tag/v0.2.4-macos27), clear quarantine if needed, and open:
+Download from [Releases](https://github.com/tame-gg/powerflow/releases/tag/v0.2.5-macos27), clear quarantine if needed, and open:
 
 ```bash
 xattr -cr /Applications/Powerflow.app

@@ -8,6 +8,10 @@ resolver = "2"
 [workspace.dependencies]
 tpower = { path = "crates/tpower" }
 
+# Stripped proc-macro dylibs fail to dlopen on macOS 27 ("mis-aligned LINKEDIT string pool").
+[profile.release.build-override]
+strip = false
+
 [workspace.lints.clippy]
 pedantic = "warn"
 nursery = "warn"
