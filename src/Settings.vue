@@ -255,11 +255,6 @@ function SettingsSection(props: SettingsSectionProps) {
           <Button
             variant="outline"
             size="sm"
-            class="
-          text-red-500 hover:text-red-600
-          border-red-500/20 hover:border-red-500/50
-          hover:bg-red-500/10
-            "
           >
             Delete
           </Button>
