@@ -13,7 +13,6 @@
   "dependencies": {
     "@intlify/unplugin-vue-i18n": "^6.0.2",
     "@number-flow/vue": "^0.3.3",
-    "@radix-icons/vue": "^1.0.0",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-dialog": "~2",
     "@tauri-apps/plugin-fs": "~2",
