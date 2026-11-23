@@ -11,6 +11,6 @@ const props = defineProps<{
 <template>
   <NumberFieldInput
     data-slot="input"
-    :class="cn('flex h-8 w-full rounded-lg border border-input bg-background py-1 font-mono text-[12px] text-center transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50', props.class)"
+    :class="cn('num flex h-6 w-full rounded border border-line-2 bg-well px-0 py-0 text-center text-[11px] font-medium text-fg shadow-none transition-colors placeholder:text-fg-4 focus:border-line-2 focus:ring-0 disabled:text-fg-4', props.class)"
   />
 </template>

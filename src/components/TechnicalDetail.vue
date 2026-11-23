@@ -1,82 +1,64 @@
 <script setup lang="ts">
-import { Battery, CloudLightning, Cpu, Thermometer } from 'lucide-vue-next'
+import { BatteryMedium, RefreshCw, Thermometer, Zap } from 'lucide-vue-next'
 
 const power = usePower()
+const health = computed(() => power.value.maxCapacity / power.value.designCapacity! * 100)
 </script>
 
 <template>
-  <div class="flex-1 grid gap-4 grid-cols-4">
-    <Card>
-      <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle class="caption">
-          {{ $t('temperature') }}
-        </CardTitle>
-        <Thermometer class="size-3.5 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        <div v-if="!power.isLoading" class="readout text-[28px] leading-8">
-          {{ power.temperature.toFixed(1) }}°C
-        </div>
-        <Skeleton v-else class="w-12 h-8" />
-        <p class="text-[11px] text-muted-foreground">
-          {{ $t('temperature_desc') }}
-        </p>
-      </CardContent>
-    </Card>
-    <Card>
-      <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle class="caption">
-          {{ $t('battery_health') }}
-        </CardTitle>
-        <Battery class="size-3.5 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        <div v-if="!power.isLoading" class="readout text-[28px] leading-8">
-          <!-- TODO: typing -->
-          {{ (power.maxCapacity / power.designCapacity! * 100).toFixed(1) }}%
-        </div>
-        <Skeleton v-else class="w-12 h-8" />
-        <p class="text-[11px] text-muted-foreground">
-          {{ $t('battery_health_desc') }}
-        </p>
-      </CardContent>
-    </Card>
-    <Card>
-      <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle class="caption">
-          {{ $t('cycle_count') }}
-        </CardTitle>
-        <Cpu class="size-3.5 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        <div v-if="!power.isLoading" class="readout text-[28px] leading-8">
-          {{ power.cycleCount }} {{ $t('times') }}
-        </div>
-        <Skeleton v-else class="w-12 h-8" />
-        <p class="text-[11px] text-muted-foreground">
-          {{ $t('cycle_count_desc') }}
-        </p>
-      </CardContent>
-    </Card>
-    <Card>
-      <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle class="caption">
-          Energy
-        </CardTitle>
-        <CloudLightning class="size-3.5 text-muted-foreground" />
-      </CardHeader>
-      <CardContent>
-        <div v-if="!power.isLoading" class="readout text-[28px] leading-8">
-          {{ power.currentCapacity }}mAh
-        </div>
-        <Skeleton v-else class="w-12 h-8" />
-        <p class="flex gap-2 text-[11px] text-muted-foreground">
-          Max Capacity: <span v-if="!power.isLoading">{{
-            power.maxCapacity
-          }}mAh</span>
-          <Skeleton v-else class="w-12 h-4" />
-        </p>
-      </CardContent>
-    </Card>
-  </div>
+  <!-- Kestrel .tiles: caption + icon, mono value, sub line, optional meter -->
+  <section class="tiles border-t-0">
+    <div class="tile" style="--accent: var(--temp)">
+      <div class="k caption">
+        <Thermometer :size="12" :stroke-width="2" />{{ $t('temperature') }}
+      </div>
+      <div v-if="!power.isLoading" class="v num">
+        {{ power.temperature.toFixed(1) }}°C
+      </div>
+      <span v-else class="scan h-5 w-16" />
+      <div class="s">
+        {{ $t('temperature_desc') }}
+      </div>
+      <Meter :value="power.isLoading ? null : power.temperature / 50 * 100" zones />
+    </div>
+    <div class="tile" style="--accent: var(--charge)">
+      <div class="k caption">
+        <BatteryMedium :size="12" :stroke-width="2" />{{ $t('battery_health') }}
+      </div>
+      <div v-if="!power.isLoading" class="v num">
+        <!-- TODO: typing -->
+        {{ health.toFixed(1) }}%
+      </div>
+      <span v-else class="scan h-5 w-16" />
+      <div class="s">
+        {{ $t('battery_health_desc') }}
+      </div>
+      <Meter :value="power.isLoading ? null : health" />
+    </div>
+    <div class="tile" style="--accent: var(--soc)">
+      <div class="k caption">
+        <RefreshCw :size="12" :stroke-width="2" />{{ $t('cycle_count') }}
+      </div>
+      <div v-if="!power.isLoading" class="v num">
+        {{ power.cycleCount }} <small class="font-sans text-xs font-medium text-fg-3">{{ $t('times') }}</small>
+      </div>
+      <span v-else class="scan h-5 w-16" />
+      <div class="s">
+        {{ $t('cycle_count_desc') }}
+      </div>
+    </div>
+    <div class="tile" style="--accent: var(--adapter)">
+      <div class="k caption">
+        <Zap :size="12" :stroke-width="2" />Energy
+      </div>
+      <div v-if="!power.isLoading" class="v num">
+        {{ power.currentCapacity }} <small class="font-sans text-xs font-medium text-fg-3">mAh</small>
+      </div>
+      <span v-else class="scan h-5 w-16" />
+      <div class="s flex gap-1">
+        Max Capacity: <span v-if="!power.isLoading" class="num">{{ power.maxCapacity }} mAh</span>
+      </div>
+      <Meter :value="power.isLoading ? null : power.currentCapacity / power.maxCapacity * 100" />
+    </div>
+  </section>
 </template>

@@ -5,13 +5,14 @@ import { useI18n } from 'vue-i18n'
 const power = usePower()
 const { t } = useI18n()
 
+// Kestrel one-hue-per-reading accents (src/assets/theme.css)
 const colors: Record<string, string> = {
-  systemTotal: 'bg-hue-gold',
-  screen: 'bg-hue-steel',
-  heatpipe: 'bg-hue-violet',
-  systemOther: 'bg-hue-neutral',
-  batteryIn: 'bg-hue-lime',
-  powerLoss: 'bg-hue-coral',
+  systemTotal: 'var(--system)',
+  screen: 'var(--screen)',
+  heatpipe: 'var(--soc)',
+  systemOther: 'var(--other)',
+  batteryIn: 'var(--charge)',
+  powerLoss: 'var(--loss)',
 }
 
 const localeMap = computed(() => ({
@@ -87,24 +88,24 @@ watchEffect(() => {
 <template>
   <!-- Charging: total = powerloss + screen + heatpipe + system other + battery in -->
   <!-- Not Charging: total = screen + heatpipe + system other -->
+  <!-- Kestrel .prop: proportional segments with 2px gaps, largest first -->
   <div
     v-if="data"
-    class="relative flex h-2 overflow-hidden rounded-[3px] bg-muted transition-all duration-500"
+    class="prop"
     @mouseleave="hovered = null"
   >
     <CommonTooltip
-      v-for="[key, { value, left, color, locale }] in data.parts"
+      v-for="[key, { value, color, locale }] in [...data.parts].sort((a, b) => a[1].left - b[1].left)"
       :key="key"
       as-child
     >
       <template #popper>
-        <span>{{ locale }}</span>
-        <span class="ml-1 font-mono font-medium">{{ value.toFixed(1) }}w</span>
+        <span class="text-fg-2">{{ locale }}</span>
+        <span class="num ml-2 font-medium">{{ value.toFixed(1) }}W</span>
       </template>
-      <div
-        class="absolute top-0 bottom-0 transition-all duration-500"
-        :class="[hovered && hovered !== key ? 'opacity-20' : 'opacity-100', color]"
-        :style="{ width: `calc(${(value / data.sum) * 100}% + 1px)`, left: `${left * 100}%` }"
+      <i
+        :class="[hovered && hovered !== key ? 'opacity-20' : 'opacity-100']"
+        :style="{ flexGrow: Math.max(0, value), background: color }"
         @mouseover="hovered = key"
       />
     </CommonTooltip>

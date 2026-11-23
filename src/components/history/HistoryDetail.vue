@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { ChargingHistory, ChargingHistoryDetail } from '@/bindings'
+import type { ChartSeries } from '@/components/kestrel/Chart.vue'
 import { commands } from '@/bindings'
-import CustomChartTooltip from '@/components/chart/CustomChartTooltip.vue'
 import { useHistory } from '@/composables/useHistory'
 import { shortEnDistanceLocale } from '@/lib/format'
 import { save } from '@tauri-apps/plugin-dialog'
 import { create } from '@tauri-apps/plugin-fs'
 import { error as logerror } from '@tauri-apps/plugin-log'
 import { format, formatDuration, intervalToDuration } from 'date-fns'
-import { Download, EllipsisVertical, Loader2, Trash2 } from 'lucide-vue-next'
+import { Download, Ellipsis, Gauge, Thermometer, Timer, Trash2 } from 'lucide-vue-next'
 
 const props = defineProps<ChargingHistory>()
 const { selectedItem, history } = useHistory()
@@ -46,63 +46,90 @@ async function exportData() {
     await file.close()
   }
 }
+
+const inactive = ref(new Set<string>())
+function toggle(name: string) {
+  const next = new Set(inactive.value)
+  next.has(name) ? next.delete(name) : next.add(name)
+  inactive.value = next
+}
+
+// Kestrel accent per reading (src/assets/theme.css)
+const curveSeries = computed<ChartSeries[]>(() => {
+  const curve = data.value.curve ?? []
+  return [
+    { name: 'System In', key: 'systemIn', color: 'var(--adapter)', unit: 'W' },
+    { name: 'Battery Power', key: 'batteryPower', color: 'var(--charge)', unit: 'W' },
+    { name: 'System Load', key: 'systemLoad', color: 'var(--system)', unit: 'W' },
+    { name: 'Battery Level', key: 'absoluteBatteryLevel', color: 'var(--screen)', unit: '%' },
+  ].map(({ key, ...s }) => ({
+    ...s,
+    values: curve.map(d => d[key as keyof typeof d] as number),
+    inactive: inactive.value.has(s.name),
+  }))
+})
+const curveLabels = computed(() => (data.value.curve ?? []).map(d => format(d.lastUpdate * 1000, 'HH:mm')))
 </script>
 
 <template>
   <div class="h-full overflow-y-auto">
-    <div v-if="isLoading" class="w-full h-full flex items-center justify-center">
-      <Loader2 class="animate-spin text-muted-foreground" />
+    <div v-if="isLoading" class="grid h-full w-full place-items-center">
+      <span class="scan h-px w-40" />
     </div>
-    <div v-else-if="error" class="flex h-full w-full items-center justify-center text-destructive">
-      {{ error }}
+    <div v-else-if="error" class="empty-state">
+      <span class="wordmark nosig">Error</span>
+      <p class="text-danger">
+        {{ error }}
+      </p>
     </div>
-    <div v-else class="px-6 pb-8">
-      <div class="flex justify-between items-center">
-        <div>
-          <h1 class="font-serif text-2xl leading-none">
+    <div v-else class="pb-6">
+      <!-- Kestrel .read header -->
+      <header class="flex items-start justify-between gap-4 px-4 pb-3 pt-4">
+        <div class="min-w-0">
+          <h1 class="readout truncate text-[28px] leading-8">
             {{ name || 'Unknown' }}
           </h1>
-          <h2 class="mt-1.5 text-xs text-muted-foreground">
+          <h2 class="mt-1 truncate text-[11px] text-fg-3">
             with {{ adapterName }}
           </h2>
         </div>
-        <div>
-          <DropdownMenu>
-            <DropdownMenuTrigger class="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-              <EllipsisVertical class="size-4" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              :side-offset="10"
-              align="end"
+        <DropdownMenu>
+          <DropdownMenuTrigger class="winctl" aria-label="More">
+            <Ellipsis :size="14" :stroke-width="2" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            :side-offset="6"
+            align="end"
+          >
+            <DropdownMenuItem
+              @click="exportData"
             >
-              <DropdownMenuItem
-                @click="exportData"
-              >
-                <Download />
-                Export Data
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                class="text-destructive focus:bg-destructive/10 focus:text-destructive [&>svg]:text-destructive"
-                @click="() => {
-                  commands.deleteHistoryById(id)
-                  selectedItem = null
-                  history.update()
-                }"
-              >
-                <Trash2 />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-      <div class="mt-4 grid gap-4 grid-cols-3">
-        <div class="space-y-2">
-          <div class="caption">
-            Duration
+              <Download />
+              Export Data
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              class="text-danger focus:bg-danger/10 focus:text-danger [&>svg]:text-danger"
+              @click="() => {
+                commands.deleteHistoryById(id)
+                selectedItem = null
+                history.update()
+              }"
+            >
+              <Trash2 />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </header>
+
+      <!-- Kestrel .tiles -->
+      <section class="tiles" style="--cols: 3">
+        <div class="tile" style="--accent: var(--charge)">
+          <div class="k caption">
+            <Timer :size="12" :stroke-width="2" />Duration
           </div>
-          <div class="readout text-[28px] leading-8">
+          <div class="v num">
             {{ formatDuration(
               intervalToDuration({
                 start: timestamp * 1000,
@@ -112,77 +139,73 @@ async function exportData() {
             )
             }}
           </div>
-          <div class="text-[11px] text-muted-foreground">
+          <div class="s num">
             {{ format(timestamp * 1000, 'yyyy-MM-dd HH:mm') }}
           </div>
         </div>
-        <div class="space-y-2">
-          <div class="caption">
-            Avg Power
+        <div class="tile" style="--accent: var(--adapter)">
+          <div class="k caption">
+            <Gauge :size="12" :stroke-width="2" />Avg Power
           </div>
-          <div class="readout text-[28px] leading-8">
+          <div class="v num">
             {{ data.avg.adapterPower.toFixed(1) }}W
           </div>
-          <div class="text-[11px] text-muted-foreground">
-            Peak: {{ data.peak.adapterPower.toFixed(1) }}W
+          <div class="s">
+            Peak <span class="num">{{ data.peak.adapterPower.toFixed(1) }}W</span>
           </div>
         </div>
-        <div class="space-y-2">
-          <div class="caption">
-            Charging rate
+        <div class="tile" style="--accent: var(--temp)">
+          <div class="k caption">
+            <Thermometer :size="12" :stroke-width="2" />Charging rate
           </div>
-          <div class="readout text-[28px] leading-8">
+          <div class="v num">
             {{ ((endLevel - fromLevel) / chargingTime * 60).toFixed(2) }}%/min
           </div>
-          <div class="text-[11px] text-muted-foreground">
-            Avg Temp: {{ data.avg.temperature.toFixed(1) }}°C
+          <div class="s">
+            Avg Temp <span class="num">{{ data.avg.temperature.toFixed(1) }}°C</span>
           </div>
         </div>
-      </div>
+      </section>
 
-      <h2 class="caption mt-8">
-        Charging Curve
-      </h2>
-      <LineChart
-        class="mt-8 max-h-[220px]"
-        index="lastUpdate"
-        :data="data.curve.map(d => ({ ...d, lastUpdate: new Date(d.lastUpdate * 1000).toLocaleTimeString() }))"
-        :categories="['systemIn', 'batteryPower', 'systemLoad', 'absoluteBatteryLevel']"
-        :custom-tooltip="CustomChartTooltip"
-        :show-legend="false"
-      />
+      <section class="border-b border-line px-4 pb-3">
+        <header class="flex h-10 items-center justify-between gap-4">
+          <span class="caption">Charging Curve</span>
+          <Legend :items="curveSeries" @toggle="toggle" />
+        </header>
+        <Chart
+          class="h-[220px]"
+          :series="curveSeries"
+          :labels="curveLabels"
+          :format="(v: number) => v.toFixed(0)"
+        />
+      </section>
 
-      <h2 class="caption mt-8">
-        Additional Detail
-      </h2>
-      <div class="mt-3 grid gap-4 text-xs">
-        <div class="grid grid-cols-2 gap-4">
+      <section class="px-4">
+        <header class="flex h-10 items-center">
+          <span class="caption">Additional Detail</span>
+        </header>
+        <!-- Kestrel .facts with dotted leaders -->
+        <dl class="facts max-w-sm text-xs">
           <div>
-            <div class="text-muted-foreground">
-              Temperature Peak
-            </div>
-            <div class="font-mono">
+            <dt>Temperature Peak</dt>
+            <dd class="num">
               {{ data.peak.temperature.toFixed(1) }}°C
-            </div>
+            </dd>
           </div>
           <div>
-            <div class="text-muted-foreground">
-              Adapter Power Peak
-            </div>
-            <div class="font-mono">
+            <dt>Adapter Power Peak</dt>
+            <dd class="num">
               {{ data.peak.adapterPower.toFixed(1) }}W
-            </div>
+            </dd>
           </div>
           <div>
-            <div class="text-muted-foreground">
-              Adapter Watts
-            </div>
-            <div class="font-mono">
-              {{ data.peak.adapterWatts }}W({{ data.peak.adapterVoltage }}V, {{ data.peak.adapterAmperage }}A)
-            </div>
+            <dt>Adapter Watts</dt>
+            <dd class="num">
+              {{ data.peak.adapterWatts }}W ({{ data.peak.adapterVoltage }}V, {{ data.peak.adapterAmperage }}A)
+            </dd>
           </div>
-        </div>
-      </div>
+        </dl>
+      </section>
     </div>
   </div>
 </template>

@@ -1,98 +1,88 @@
 import tailwindcssForm from '@tailwindcss/forms'
 import tailwindcssAnimate from 'tailwindcss-animate'
 
+// Every colour is a Kestrel token from src/assets/theme.css. color-mix keeps
+// Tailwind's opacity modifiers (bg-accent/10) working on hex and rgba values.
+function token(name: string) {
+  return `color-mix(in srgb, var(--${name}) calc(<alpha-value> * 100%), transparent)`
+}
+
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: 'class',
   content: [
-    './pages/**/*.{ts,tsx,vue}',
-    './components/**/*.{ts,tsx,vue}',
-    './app/**/*.{ts,tsx,vue}',
     './src/**/*.{ts,tsx,vue}',
   ],
   theme: {
-    container: {
-      center: true,
-      padding: '2rem',
-      screens: {
-        '2xl': '1400px',
-      },
-    },
     extend: {
       fontFamily: {
-        sans: ['system-ui', '-apple-system', 'Inter', 'SF Pro Text', 'Segoe UI Variable Text', 'Segoe UI', 'sans-serif'],
-        mono: ['JetBrains Mono', 'ui-monospace', 'SF Mono', 'Cascadia Mono', 'Menlo', 'Consolas', 'monospace'],
-        serif: ['Instrument Serif', 'Georgia', 'serif'],
+        sans: ['var(--font)'],
+        mono: ['var(--mono)'],
+        serif: ['var(--serif)'],
       },
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+        background: token('bg'),
+        foreground: token('text'),
+        fg: {
+          DEFAULT: token('text'),
+          2: token('text-2'),
+          3: token('text-3'),
+          4: token('text-4'),
         },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+        rail: token('rail'),
+        well: token('well'),
+        hover: token('hover'),
+        raise: {
+          DEFAULT: token('raise'),
+          2: token('raise-2'),
+          3: token('raise-3'),
         },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
+        line: {
+          DEFAULT: token('line'),
+          2: token('line-2'),
         },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
-        },
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
-        },
-        popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
-        },
-        card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
-        },
-        success: 'hsl(var(--success))',
-        warn: 'hsl(var(--warn))',
-        hue: {
-          gold: 'hsl(var(--hue-gold))',
-          teal: 'hsl(var(--hue-teal))',
-          steel: 'hsl(var(--hue-steel))',
-          violet: 'hsl(var(--hue-violet))',
-          lime: 'hsl(var(--hue-lime))',
-          cyan: 'hsl(var(--hue-cyan))',
-          coral: 'hsl(var(--hue-coral))',
-          rose: 'hsl(var(--hue-rose))',
-          neutral: 'hsl(var(--hue-neutral))',
-        },
+        tick: token('tick'),
+        grid: token('grid'),
+        accent: token('accent'),
+        gold: token('gold'),
+        warn: token('warn'),
+        danger: token('danger'),
+        ok: token('ok'),
+        cpu: token('cpu'),
+        mem: token('mem'),
+        disk: token('disk'),
+        net: token('net'),
+        gpu: token('gpu'),
+        battery: token('battery'),
+        sensors: token('sensors'),
+        ports: token('ports'),
+        projects: token('projects'),
+        system: token('system'),
+        screen: token('screen'),
+        soc: token('soc'),
+        adapter: token('adapter'),
+        charge: token('charge'),
+        loss: token('loss'),
+        temp: token('temp'),
+        other: token('other'),
       },
       backgroundImage: {
         surface: 'var(--surface)',
       },
       boxShadow: {
-        popover: 'var(--popover-shadow)',
+        pop: 'var(--pop-shadow)',
+        flag: 'var(--flag-shadow)',
       },
       borderRadius: {
-        xl: 'calc(var(--radius) * 1.4)',
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) * 0.8)',
-        sm: 'calc(var(--radius) * 0.6)',
+        DEFAULT: 'var(--r)',
+        lg: 'var(--r)',
+        pop: '10px',
+        window: '12px',
+      },
+      transitionTimingFunction: {
+        kestrel: 'var(--ease)',
       },
       keyframes: {
-        'accordion-down': {
-          from: { height: 0 },
-          to: { height: 'var(--radix-accordion-content-height)' },
-        },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: 0 },
-        },
         'collapsible-down': {
           from: { height: 0 },
           to: { height: 'var(--radix-collapsible-content-height)' },
@@ -103,10 +93,10 @@ export default {
         },
       },
       animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
         'collapsible-down': 'collapsible-down 0.2s ease-in-out',
         'collapsible-up': 'collapsible-up 0.2s ease-in-out',
+        'beat': 'beat 900ms ease-out forwards',
+        'fade': 'fade 80ms linear',
       },
     },
   },

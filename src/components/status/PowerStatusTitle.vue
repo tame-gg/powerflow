@@ -21,36 +21,38 @@ const buttonText = computed(() => {
 </script>
 
 <template>
-  <div class="mr-10 flex gap-2 items-center">
+  <div class="caption flex items-center gap-2">
     {{ power.isCharging ? $t('status.charging_power') : $t('status.system_power') }}
     <span
       v-if="power.isRemote"
-      class="mr-1 size-2 rounded-full"
+      class="size-1.5 rounded-full"
       :class="{
-        'bg-success animate-pulse': !rawData.isLocal && !rawData.offline,
-        'bg-hue-neutral': !rawData.isLocal && rawData.offline,
+        'bg-ok animate-pulse': !rawData.isLocal && !rawData.offline,
+        'bg-fg-4': !rawData.isLocal && rawData.offline,
       }"
     />
   </div>
 
-  <Skeleton v-if="power.isLoading" class="w-24 h-6" />
-  <div
+  <span v-if="power.isLoading" class="scan h-[18px] w-24" />
+  <span
     v-else-if="power.isCharging"
-    class="chip chip-accent h-6 truncate px-2"
+    class="chip accent num truncate"
+    style="--accent: var(--adapter)"
   >
-    <span class="mr-1 font-semibold">{{ power.adapterWatts }}W</span>
-    <span class="text-[10px] opacity-70">({{ power.adapterVoltage }}V,{{
-      power.adapterAmperage }}A)</span>
-  </div>
-  <div
+    <b class="font-medium">{{ power.adapterWatts }}W</b>
+    <span class="opacity-70">{{ power.adapterVoltage }}V · {{ power.adapterAmperage }}A</span>
+  </span>
+  <button
     v-else
-    class="chip chip-accent h-6 w-20 justify-center truncate px-2 transition-colors hover:bg-primary/20"
+    class="chip accent num w-[76px] justify-center truncate transition-colors duration-75 hover:bg-accent/20"
     @click.stop="showRemainDuration = !showRemainDuration"
   >
-    <span class="mr-1 font-semibold">{{ buttonText }}</span>
+    <b class="font-medium">{{ buttonText }}</b>
     <ArrowUpDown
-      class="size-3 opacity-70 transition-transform duration-300"
+      :size="10"
+      :stroke-width="2"
+      class="opacity-70 transition-transform duration-300"
       :class="{ 'rotate-180': showRemainDuration }"
     />
-  </div>
+  </button>
 </template>

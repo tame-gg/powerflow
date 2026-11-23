@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils'
-import { CaretSortIcon } from '@radix-icons/vue'
+import { ChevronsUpDown } from 'lucide-vue-next'
 import { SelectIcon, SelectTrigger, type SelectTriggerProps, useForwardProps } from 'radix-vue'
 import { computed, type HTMLAttributes } from 'vue'
 
@@ -19,13 +19,13 @@ const forwardedProps = useForwardProps(delegatedProps)
   <SelectTrigger
     v-bind="forwardedProps"
     :class="cn(
-      'flex h-8 w-full items-center justify-between whitespace-nowrap rounded-lg border border-input bg-background bg-surface px-2.5 py-1 text-[12.5px] transition-colors hover:bg-muted data-[placeholder]:text-muted-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:truncate text-start',
+      'btn w-full justify-between gap-2 text-start data-[state=open]:bg-raise-3 data-[placeholder]:text-fg-3 disabled:text-fg-4 [&>span]:truncate [&>span]:flex [&>span]:items-center',
       props.class,
     )"
   >
     <slot />
     <SelectIcon as-child>
-      <CaretSortIcon class="size-4 shrink-0 text-muted-foreground" />
+      <ChevronsUpDown class="size-3 shrink-0 text-fg-3" :stroke-width="2" />
     </SelectIcon>
   </SelectTrigger>
 </template>

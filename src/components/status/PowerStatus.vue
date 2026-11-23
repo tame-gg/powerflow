@@ -1,27 +1,20 @@
 <script setup lang="ts">
-import { Card } from '@/components/ui/card'
-
 const isPopover = inject('isPopover', false)
-const div = h('div')
 </script>
 
 <template>
-  <Component
-    :is="isPopover ? div : Card"
-    class="min-w-80"
-    :class="{ 'flex-1 bg-transparent border-none shadow-none': isPopover }"
+  <!-- Kestrel .read (main window) / .mini-read (popover) -->
+  <section
+    class="flex min-w-0 flex-col"
+    :class="isPopover ? 'h-full gap-2 px-3 pb-3 pt-2.5' : 'gap-2 p-4'"
   >
-    <CardHeader class="space-y-0 pb-2 gap-y-0">
-      <CardTitle class="flex items-center justify-between gap-2 truncate text-[14px]">
-        <PowerStatusTitle />
-      </CardTitle>
-      <CardDescription class="text-[10px] font-mono flex gap-[2px] items-center">
-        <PowerStatusDescription />
-      </CardDescription>
-    </CardHeader>
-    <CardContent class="space-y-3 mt-1">
-      <PowerStatusNumber />
-      <PowerStatusFooter />
-    </CardContent>
-  </Component>
+    <div class="flex h-6 items-center justify-between gap-2">
+      <PowerStatusTitle />
+    </div>
+    <div class="-mt-1 flex items-center gap-[3px] truncate text-[11px] text-fg-3">
+      <PowerStatusDescription />
+    </div>
+    <PowerStatusNumber />
+    <PowerStatusFooter class="mt-auto" />
+  </section>
 </template>
